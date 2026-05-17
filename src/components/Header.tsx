@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import { RotateCw, Settings, Search } from 'lucide-react';
 
 export function Header({ search, setSearch }: { search: string, setSearch: (s: string) => void }) {
-  const { nav, loadData } = useStore();
+  const { nav, forceRefresh, setNav } = useStore();
 
   const titles: Record<string, [string, string]> = {
     inicio: ['Painel de Controle', 'Gestão de Inventário e Fluxo de Caixa'],
@@ -29,10 +29,10 @@ export function Header({ search, setSearch }: { search: string, setSearch: (s: s
              <div className="w-3 h-3 bg-danger rounded-full animate-pulse"></div>
              <span className="text-sm font-semibold text-text-dark">Estoque em Alerta</span>
           </div>
-          <button onClick={loadData} className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium">
+          <button onClick={forceRefresh} className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium">
             <RotateCw size={20} />
           </button>
-          <button className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium">
+          <button onClick={() => setNav('settings')} className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium">
             <Settings size={20} />
           </button>
         </div>

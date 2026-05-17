@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Produto, Transacao, Fiado, Settings } from '../types';
-import { db, ref, onValue, set, rootRef, remove } from '../lib/firebase';
+import { db, ref, onValue, set, rootRef, remove, get as firebaseGet } from '../lib/firebase';
 
 interface AppState {
   produtos: Produto[];
@@ -11,9 +11,10 @@ interface AppState {
   dbError: string | null;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (v: boolean) => void;
-  nav: 'inicio' | 'caixa' | 'produtos' | 'estoque' | 'fiados' | 'extrato' | 'relatorios';
+  nav: 'inicio' | 'caixa' | 'produtos' | 'estoque' | 'fiados' | 'extrato' | 'relatorios' | 'settings';
   setNav: (v: AppState['nav']) => void;
   loadData: () => void;
+  forceRefresh: () => Promise<void>;
   saveData: () => Promise<void>;
   addTransacao: (t: Transacao) => Promise<void>;
   updateProduto: (p: Produto) => Promise<void>;
@@ -21,6 +22,7 @@ interface AppState {
   updateFiado: (f: Fiado) => Promise<void>;
   removeFiado: (id: string) => Promise<void>;
   resetAllData: () => Promise<void>;
+  updateSettings: (updates: Partial<Settings>) => Promise<void>;
 }
 
 export const useStore = create<AppState>((setStore, get) => ({
@@ -67,6 +69,20 @@ export const useStore = create<AppState>((setStore, get) => ({
       setStore({ isLoading: false, dbError: "Aviso: " + error.message + " (Usando dados modo Offline)" });
     });
   },
+  forceRefresh: async () => {
+    try {
+      const snapshot = await firebaseGet(rootRef);
+      const val = snapshot.val() || {};
+      setStore({
+        produtos: Array.isArray(val.produtos) ? val.produtos : (val.produtos ? Object.values(val.produtos) : []),
+        transacoes: Array.isArray(val.transacoes) ? val.transacoes : (val.transacoes ? Object.values(val.transacoes) : []),
+        fiados: Array.isArray(val.fiados) ? val.fiados : (val.fiados ? Object.values(val.fiados) : []),
+        settings: val.settings || { saldoInicial: 0, lastWeeklyReset: null },
+      });
+    } catch (error) {
+      console.error('Manual Refresh Error:', error);
+    }
+  },
   saveData: async () => {
     const state = get();
     const dataToSave = {
@@ -79,12 +95,10 @@ export const useStore = create<AppState>((setStore, get) => ({
     // Always save local fallback
     localStorage.setItem('botiquim_data_fallback', JSON.stringify(dataToSave));
     
-    // Try to save to firebase
-    try {
-      await set(rootRef, dataToSave);
-    } catch (error) {
+    // Try to save to firebase (fire and forget to prevent hanging if offline)
+    set(rootRef, dataToSave).catch(error => {
       console.error("Failed to save to firebase, saved locally", error);
-    }
+    });
   },
   addTransacao: async (t) => {
     setStore((s) => ({ transacoes: [...s.transacoes, t] }));
@@ -122,8 +136,16 @@ export const useStore = create<AppState>((setStore, get) => ({
     setStore((s) => ({ fiados: s.fiados.filter((f) => f.id !== id) }));
     await get().saveData();
   },
+  updateSettings: async (updates) => {
+    setStore((s) => ({ settings: { ...s.settings, ...updates } }));
+    await get().saveData();
+  },
   resetAllData: async () => {
-    await remove(rootRef);
+    // Fire and forget Firebase removal to prevent hanging if offline
+    remove(rootRef).catch(error => {
+      console.error("Failed to remove data from Firebase:", error);
+    });
     setStore({ produtos: [], transacoes: [], fiados: [], settings: { saldoInicial: 0, lastWeeklyReset: null } });
+    get().saveData().catch(console.error);
   }
 }));

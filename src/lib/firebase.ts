@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, set, remove } from 'firebase/database';
+import { getDatabase, ref, onValue, set, remove, get } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDc8lVaOtwJhoykCYvzAYNhdS0q8dBdx6w",
@@ -16,4 +16,4 @@ const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const rootRef = ref(db, 'botiquim_v3_react'); // Changing root to not conflict weirdly if they have garbage Data
 
-export { ref, onValue, set, remove };
+export { ref, onValue, set, remove, get };

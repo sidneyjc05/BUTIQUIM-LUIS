@@ -10,6 +10,7 @@ import { Estoque } from './views/Estoque';
 import { Fiados } from './views/Fiados';
 import { Extrato } from './views/Extrato';
 import { Relatorios } from './views/Relatorios';
+import { SettingsView } from './views/Settings';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
       case 'fiados': return <Fiados search={search} />;
       case 'extrato': return <Extrato search={search} />;
       case 'relatorios': return <Relatorios />;
+      case 'settings': return <SettingsView />;
       default: return <Dashboard />;
     }
   };
