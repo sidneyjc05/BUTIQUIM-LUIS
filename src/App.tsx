@@ -44,11 +44,11 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-bg font-sans overflow-hidden">
+    <div className="flex h-[100dvh] w-full bg-bg font-sans overflow-hidden">
       <Sidebar />
-      <main className="flex-1 flex flex-col h-screen relative overflow-hidden">
+      <main className="flex-1 flex flex-col h-full relative overflow-hidden">
         <Header search={search} setSearch={setSearch} />
-        <div className="flex-1 overflow-y-auto scroll-smooth relative">
+        <div className="flex-1 overflow-y-auto scroll-smooth relative pb-28 md:pb-0">
           
           {dbError && (
             <div className="m-4 md:m-6 bg-warning-light text-warning-dark p-6 rounded-xl shadow-md border border-warning-dark/20 animate-slide-up sticky top-4 z-50">

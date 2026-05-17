@@ -48,7 +48,7 @@ export function Dashboard() {
 
   return (
     <>
-      <div className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-fade pb-24 relative">
+      <div className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-fade pb-32 md:pb-24 relative">
       <div className="flex items-center gap-3 text-text-dark font-bold text-xl mb-4">
         <div className="w-10 h-10 rounded-xl bg-surface border border-border text-primary flex items-center justify-center shadow-sm">
           <CalendarDays size={20} />
