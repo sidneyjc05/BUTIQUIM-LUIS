@@ -3,41 +3,31 @@ import { useStore } from '../store/useStore';
 import { Save, AlertTriangle, CheckCircle2, X } from 'lucide-react';
 
 export function SettingsView() {
-  const { settings, updateSettings, resetAllData } = useStore();
+  const { settings, updateSettings, resetAllData, setNotification } = useStore();
   const [saldo, setSaldo] = useState(settings.saldoInicial.toString());
-  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
 
   const handleSave = () => {
     const num = parseFloat(saldo);
     if (!isNaN(num)) {
       updateSettings({ saldoInicial: num });
-      setMessage({ text: 'Configurações salvas com sucesso!', type: 'success' });
-      setTimeout(() => setMessage(null), 3000);
     } else {
-      setMessage({ text: 'Por favor, insira um valor válido para o saldo.', type: 'error' });
-      setTimeout(() => setMessage(null), 3000);
+      setNotification({ text: 'Por favor, insira um valor válido para o saldo.', type: 'error' });
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 
   const handleReset = async () => {
     await resetAllData();
     setShowConfirmReset(false);
-    setMessage({ text: 'Todos os dados foram apagados do banco de dados.', type: 'success' });
-    setTimeout(() => setMessage(null), 3000);
+    setNotification({ text: 'Todos os dados foram apagados do banco de dados.', type: 'success' });
+    setTimeout(() => setNotification(null), 3000);
   };
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
       <h2 className="text-2xl font-bold">Configurações</h2>
       
-      {message && (
-        <div className={`p-4 rounded-xl flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
-          {message.type === 'success' ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
-          <p className="font-medium">{message.text}</p>
-        </div>
-      )}
-
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-border space-y-8">
         
         <div>
@@ -45,7 +35,7 @@ export function SettingsView() {
           <div className="grid gap-4 max-w-sm">
             <div>
               <label className="block text-sm font-medium text-text-medium mb-1">
-                Saldo Inicial (R$)
+                Saldo do Caixa (R$)
               </label>
               <input
                 type="number"
@@ -61,7 +51,7 @@ export function SettingsView() {
               className="h-11 bg-brand-primary hover:bg-brand-primary/90 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <Save size={20} />
-              Salvar Alterações
+              Salvar Saldo do Caixa
             </button>
           </div>
         </div>

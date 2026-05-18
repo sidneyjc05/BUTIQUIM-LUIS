@@ -9,6 +9,8 @@ interface AppState {
   settings: Settings;
   isLoading: boolean;
   dbError: string | null;
+  notification: { text: string; type: 'success' | 'error' } | null;
+  setNotification: (n: { text: string; type: 'success' | 'error' } | null) => void;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (v: boolean) => void;
   nav: 'inicio' | 'caixa' | 'produtos' | 'estoque' | 'fiados' | 'extrato' | 'relatorios' | 'settings';
@@ -32,6 +34,8 @@ export const useStore = create<AppState>((setStore, get) => ({
   settings: { saldoInicial: 0, lastWeeklyReset: null },
   isLoading: true,
   dbError: null,
+  notification: null,
+  setNotification: (notification) => setStore({ notification }),
   mobileMenuOpen: false,
   setMobileMenuOpen: (mobileMenuOpen) => setStore({ mobileMenuOpen }),
   nav: 'inicio',
@@ -96,8 +100,13 @@ export const useStore = create<AppState>((setStore, get) => ({
     localStorage.setItem('botiquim_data_fallback', JSON.stringify(dataToSave));
     
     // Try to save to firebase (fire and forget to prevent hanging if offline)
-    set(rootRef, dataToSave).catch(error => {
+    set(rootRef, dataToSave).then(() => {
+        state.setNotification({ text: 'Alterações salvas com sucesso!', type: 'success' });
+        setTimeout(() => state.setNotification(null), 3000);
+    }).catch(error => {
       console.error("Failed to save to firebase, saved locally", error);
+      state.setNotification({ text: 'Erro ao salvar alterações no servidor.', type: 'error' });
+      setTimeout(() => state.setNotification(null), 3000);
     });
   },
   addTransacao: async (t) => {

@@ -3,6 +3,7 @@ import { useStore } from './store/useStore';
 import { Sidebar } from './components/Sidebar';
 import { BottomNav } from './components/BottomNav';
 import { Header } from './components/Header';
+import { Notification } from './components/Notification';
 import { Dashboard } from './views/Dashboard';
 import { Caixa } from './views/Caixa';
 import { Produtos } from './views/Produtos';
@@ -49,6 +50,7 @@ export default function App() {
       <main className="flex-1 flex flex-col h-full relative overflow-hidden">
         <Header search={search} setSearch={setSearch} />
         <div className="flex-1 overflow-y-auto scroll-smooth relative pb-28 md:pb-0">
+          <Notification />
           
           {dbError && (
             <div className="m-4 md:m-6 bg-warning-light text-warning-dark p-6 rounded-xl shadow-md border border-warning-dark/20 animate-slide-up sticky top-4 z-50">
