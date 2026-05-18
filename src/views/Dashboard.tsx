@@ -210,7 +210,7 @@ function SummaryCard({ icon: Icon, label, value, color, bg, className }: any) {
   );
 }
 
-function TransactionItem({ tx, key }: { tx: any, key?: any }) {
+function TransactionItem({ tx }: { tx: any }) {
   const isSaida = tx.tipo === 'despesa';
   const isVenda = tx.tipo === 'venda';
   const isFiado = tx.tipo === 'fiado';
