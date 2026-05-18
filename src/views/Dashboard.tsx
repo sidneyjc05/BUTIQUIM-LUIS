@@ -11,16 +11,29 @@ export function Dashboard() {
   const [valor, setValor] = useState('');
   const [descricao, setDescricao] = useState('');
 
-  const hoje = new Date().toISOString().split('T')[0];
-  const hojeTrans = transacoes.filter(t => t.data.startsWith(hoje));
-  const vendas = hojeTrans.filter(t => t.tipo === 'venda').reduce((s, t) => s + t.valor, 0);
-  const saidas = hojeTrans.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0);
-  const recebimentos = hojeTrans.filter(t => t.tipo === 'recebimento').reduce((s, t) => s + t.valor, 0);
-  const custoVendas = hojeTrans.filter(t => t.tipo === 'venda').reduce((s, t) => s + (t.custoTotal || 0), 0);
+  const agora = new Date();
+  const diaSemana = agora.getDay();
+  const diffSegunda = agora.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+  const inicioSemana = new Date(agora);
+  inicioSemana.setDate(diffSegunda);
+  inicioSemana.setHours(0, 0, 0, 0);
+
+  const semanaTrans = transacoes.filter(t => new Date(t.data) >= inicioSemana);
+  
+  const vendas = semanaTrans.filter(t => t.tipo === 'venda').reduce((s, t) => s + t.valor, 0);
+  const saidas = semanaTrans.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0);
+  const recebimentos = semanaTrans.filter(t => t.tipo === 'recebimento').reduce((s, t) => s + t.valor, 0);
+  const custoVendas = semanaTrans.filter(t => t.tipo === 'venda').reduce((s, t) => s + (t.custoTotal || 0), 0);
   
   const lucro = vendas - custoVendas;
   const fiadoAtivo = fiados.filter(f => f.status === 'pendente').reduce((s, f) => s + (f.valor - f.pago), 0);
-  const caixa = (settings.saldoInicial || 0) + vendas + recebimentos - saidas;
+  
+  // O saldo do caixa deve ser o total de todas as transações de todos os tempos, não só da semana
+  const totalVendasAll = transacoes.filter(t => t.tipo === 'venda').reduce((s, t) => s + t.valor, 0);
+  const totalSaidasAll = transacoes.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0);
+  const totalRecebimentosAll = transacoes.filter(t => t.tipo === 'recebimento').reduce((s, t) => s + t.valor, 0);
+  const totalPagamentosAll = transacoes.filter(t => t.tipo === 'pagamento').reduce((s, t) => s + t.valor, 0); 
+  const caixa = (settings.saldoInicial || 0) + totalVendasAll + totalRecebimentosAll + totalPagamentosAll - totalSaidasAll;
 
   // Limitation requested by User: 5 messages for últimas movimentações and add button "Ver mais"
   const ultimasTransacoes = [...transacoes].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()).slice(0, 5);
@@ -53,13 +66,13 @@ export function Dashboard() {
         <div className="w-10 h-10 rounded-xl bg-surface border border-border text-primary flex items-center justify-center shadow-sm">
           <CalendarDays size={20} />
         </div>
-        Hoje
+        Esta Semana
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <SummaryCard icon={TrendingUp} label="Vendas Hoje" value={formatMoney(vendas)} color="text-primary" bg="bg-primary-light" />
-        <SummaryCard icon={TrendingDown} label="Saídas Hoje" value={formatMoney(saidas)} color="text-danger" bg="bg-danger-light" />
-        <SummaryCard icon={Coins} label="Lucro Hoje" value={formatMoney(lucro)} color="text-[#7C4DFF]" bg="bg-[#EDE7F6]" />
+        <SummaryCard icon={TrendingUp} label="Vendas Semana" value={formatMoney(vendas)} color="text-primary" bg="bg-primary-light" />
+        <SummaryCard icon={TrendingDown} label="Saídas Semana" value={formatMoney(saidas)} color="text-danger" bg="bg-danger-light" />
+        <SummaryCard icon={Coins} label="Lucro Semana" value={formatMoney(lucro)} color="text-[#7C4DFF]" bg="bg-[#EDE7F6]" />
         <SummaryCard icon={BookOpen} label="Fiado Ativo" value={formatMoney(fiadoAtivo)} color="text-warning" bg="bg-warning-light" className="hidden md:flex" />
         <SummaryCard icon={Wallet} label="Saldo Caixa" value={formatMoney(caixa)} color="text-secondary" bg="bg-secondary-light" className="col-span-2 md:col-span-1" />
       </div>
@@ -133,14 +146,14 @@ export function Dashboard() {
       {/* Fixed Action Buttons */}
       <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 flex flex-col gap-3 z-40">
         <button 
-          onClick={() => setModalType('recebimento')}
+          onClick={() => { setValor(''); setDescricao(''); setModalType('recebimento'); }}
           className="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
           title="Nova Entrada"
         >
           <Plus size={28} />
         </button>
         <button 
-          onClick={() => setModalType('despesa')}
+          onClick={() => { setValor(''); setDescricao(''); setModalType('despesa'); }}
           className="w-14 h-14 bg-danger text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
           title="Nova Despesa"
         >
@@ -210,7 +223,7 @@ function SummaryCard({ icon: Icon, label, value, color, bg, className }: any) {
   );
 }
 
-function TransactionItem({ tx }: { tx: any }) {
+function TransactionItem({ tx }: { tx: any, key?: React.Key }) {
   const isSaida = tx.tipo === 'despesa';
   const isVenda = tx.tipo === 'venda';
   const isFiado = tx.tipo === 'fiado';

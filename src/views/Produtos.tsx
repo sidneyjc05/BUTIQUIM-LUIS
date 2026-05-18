@@ -10,11 +10,11 @@ export function Produtos({ search }: { search: string }) {
   const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<Partial<Produto>>({
-    nome: '', categoria: 'Bebidas', precoCusto: 0, precoVenda: 0, 
-    estoqueCaixas: 0, estoqueMinimo: 5, 
-    vendeUnidade: false, unidadesPorCaixa: 1, precoUnitario: 0,
-    vendePeso: false, precoKilo: 0
+  const [formData, setFormData] = useState<Partial<Produto> | any>({
+    nome: '', categoria: 'Bebidas', precoCusto: '', precoVenda: '', 
+    estoqueCaixas: '', estoqueMinimo: '', 
+    vendeUnidade: false, unidadesPorCaixa: '', precoUnitario: '',
+    vendePeso: false, precoKilo: ''
   });
 
   const prods = search 
@@ -23,13 +23,23 @@ export function Produtos({ search }: { search: string }) {
 
   const openNew = () => {
     setEditingId(null);
-    setFormData({ nome: '', categoria: 'Bebidas', precoCusto: 0, precoVenda: 0, estoqueCaixas: 0, estoqueMinimo: 5, vendeUnidade: false, unidadesPorCaixa: 1, precoUnitario: 0, vendePeso: false, precoKilo: 0 });
+    setFormData({ nome: '', categoria: 'Bebidas', precoCusto: '', precoVenda: '', estoqueCaixas: '', estoqueMinimo: '', vendeUnidade: false, unidadesPorCaixa: '', precoUnitario: '', vendePeso: false, precoKilo: '' });
     setView('form');
   };
 
   const openEdit = (p: Produto) => {
     setEditingId(p.id);
-    setFormData({ ...p });
+    const mapped: any = { ...p };
+    // Convert 0s to empty strings for inputs
+    if (mapped.precoCusto === 0) mapped.precoCusto = '';
+    if (mapped.precoVenda === 0) mapped.precoVenda = '';
+    if (mapped.estoqueCaixas === 0) mapped.estoqueCaixas = '';
+    if (mapped.estoqueMinimo === 0) mapped.estoqueMinimo = '';
+    if (mapped.unidadesPorCaixa === 0) mapped.unidadesPorCaixa = '';
+    if (mapped.precoUnitario === 0) mapped.precoUnitario = '';
+    if (mapped.precoKilo === 0) mapped.precoKilo = '';
+    
+    setFormData(mapped);
     setView('form');
   };
 

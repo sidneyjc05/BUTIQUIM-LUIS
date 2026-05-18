@@ -25,33 +25,33 @@ export function Header({ search, setSearch }: { search: string, setSearch: (s: s
   };
 
   return (
-    <header className="bg-bg text-text-dark p-6 md:p-8 flex flex-col gap-6 shrink-0 z-20">
-      <div className="flex justify-between items-end w-full max-w-7xl mx-auto">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-text-dark">{title}</h1>
-          <p className="text-text-medium font-medium mt-1">{subtitle}</p>
+    <header className="bg-primary text-white p-6 md:p-8 flex flex-col gap-6 shrink-0 z-20 rounded-b-3xl shadow-md">
+      <div className="flex justify-between items-start w-full max-w-7xl mx-auto">
+        <div className="mt-2">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">{title}</h1>
+          <p className="text-white/80 font-medium mt-1">{subtitle}</p>
         </div>
-        <div className="flex gap-4">
-          <div className="hidden md:flex bg-white px-6 py-3 rounded-2xl shadow-sm border border-border items-center gap-3">
-             <div className="w-3 h-3 bg-danger rounded-full animate-pulse"></div>
-             <span className="text-sm font-semibold text-text-dark">Estoque em Alerta</span>
+        <div className="flex gap-3">
+          <div className="hidden md:flex bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl shadow-sm border border-white/20 items-center gap-3">
+             <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+             <span className="text-sm font-semibold text-white">Estoque em Alerta</span>
           </div>
           <button 
             onClick={handleRefresh} 
             disabled={isRefreshing}
-            className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium disabled:opacity-50"
+            className="w-12 h-12 rounded-2xl bg-white/20 border border-white/20 flex items-center justify-center hover:bg-white/30 transition-all shadow-sm text-white disabled:opacity-50"
             title="Atualizar dados"
           >
-            <RotateCw size={20} className={isRefreshing ? "animate-spin text-primary" : ""} />
+            <RotateCw size={20} className={isRefreshing ? "animate-spin text-white" : ""} />
           </button>
-          <button onClick={() => setNav('settings')} className="w-12 h-12 rounded-2xl bg-white border border-border flex items-center justify-center hover:bg-surface-2 transition-all shadow-sm text-text-medium">
+          <button onClick={() => setNav('settings')} className="w-12 h-12 rounded-2xl bg-white/20 border border-white/20 flex items-center justify-center hover:bg-white/30 transition-all shadow-sm text-white">
             <Settings size={20} />
           </button>
         </div>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto bg-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm border border-border focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-light transition-all">
-        <Search size={22} className="text-text-muted" />
+      <div className="w-full max-w-7xl mx-auto bg-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-md border-none focus-within:ring-4 focus-within:ring-white/30 transition-all text-text-dark mt-2 mb-2">
+        <Search size={22} className="text-text-medium" />
         <input 
           type="text" 
           value={search}

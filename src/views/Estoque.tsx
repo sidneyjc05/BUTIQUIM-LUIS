@@ -18,7 +18,7 @@ export function Estoque({ search }: { search: string }) {
   const openRepor = (p: any) => {
     setSelectedP(p);
     setQtd('');
-    setCusto(p.precoCusto);
+    setCusto('');
     setModalOpen(true);
   };
 

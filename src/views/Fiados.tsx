@@ -138,7 +138,7 @@ export function Fiados({ search }: { search: string }) {
           </div>
           Contas a Receber
         </h2>
-        <button onClick={() => setView('form-novo')} className="bg-primary text-white font-bold py-2.5 px-5 rounded-xl flex items-center gap-2 hover:bg-primary-dark shadow-md shadow-primary/20 transition-all">
+        <button onClick={() => { setNome(''); setTelefone(''); setView('form-novo'); }} className="bg-primary text-white font-bold py-2.5 px-5 rounded-xl flex items-center gap-2 hover:bg-primary-dark shadow-md shadow-primary/20 transition-all">
           <Plus size={18} /> Novo Cliente
         </button>
       </div>

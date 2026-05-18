@@ -88,7 +88,7 @@ export function Extrato({ search }: { search: string }) {
   );
 }
 
-function TransactionItem({ tx }: { tx: any }) {
+function TransactionItem({ tx }: { tx: any, key?: React.Key }) {
   const isSaida = tx.tipo === 'despesa';
   const isVenda = tx.tipo === 'venda';
   const isFiado = tx.tipo === 'fiado';

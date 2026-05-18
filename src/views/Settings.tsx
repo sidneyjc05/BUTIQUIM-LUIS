@@ -4,7 +4,7 @@ import { Save, AlertTriangle, CheckCircle2, X } from 'lucide-react';
 
 export function SettingsView() {
   const { settings, updateSettings, resetAllData, setNotification } = useStore();
-  const [saldo, setSaldo] = useState(settings.saldoInicial.toString());
+  const [saldo, setSaldo] = useState(settings.saldoInicial === 0 ? '' : settings.saldoInicial.toString());
   const [showConfirmReset, setShowConfirmReset] = useState(false);
 
   const handleSave = () => {
@@ -42,16 +42,16 @@ export function SettingsView() {
                 value={saldo}
                 onChange={(e) => setSaldo(e.target.value)}
                 step="0.01"
-                className="w-full h-11 px-4 rounded-xl border border-border focus:border-brand-primary/50 focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none"
+                className="w-full h-11 px-4 rounded-xl border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                 placeholder="0.00"
               />
             </div>
             <button
               onClick={handleSave}
-              className="h-11 bg-brand-primary hover:bg-brand-primary/90 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="h-11 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <Save size={20} />
-              Salvar Saldo do Caixa
+              Salvar Saldo!
             </button>
           </div>
         </div>
