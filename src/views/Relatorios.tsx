@@ -670,7 +670,7 @@ const GLOSSARY_DATA = [
       <Treemap
         data={mockTreemap}
         dataKey="size"
-        aspect={4/3}
+        aspectRatio={4/3}
         stroke="#fff"
         fill="#10B981"
       />
